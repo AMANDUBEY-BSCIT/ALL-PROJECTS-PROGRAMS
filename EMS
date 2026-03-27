@@ -1,0 +1,319 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Employee {
+    int id;
+    char name[50];
+    int experience;
+    int level;
+    int salary;
+};
+
+struct Employee e[100];
+int count = 0;
+
+// Salary Function
+int getSalary(int level, int exp) {
+
+    if (level == 1) { // Senior
+        if (exp == 0) return 20000;
+        else if (exp <= 3) return 30000;
+        else if (exp <= 5) return 40000;
+        else if (exp <= 10) return 50000;
+        else return 60000;
+    }
+
+    else if (level == 2) { // Mid
+        if (exp == 0) return 15000;
+        else if (exp <= 3) return 20000;
+        else if (exp <= 5) return 25000;
+        else if (exp <= 10) return 30000;
+        else return 35000;
+    }
+
+    else if (level == 3) { // Junior
+        if (exp == 0) return 10000;
+        else if (exp <= 3) return 15000;
+        else if (exp <= 5) return 20000;
+        else if (exp <= 10) return 25000;
+        else return 30000;
+    }
+
+    else { // Fresher
+        if (exp == 0) return 8000;
+        else if (exp <= 3) return 10000;
+        else if (exp <= 5) return 12000;
+        else if (exp <= 10) return 15000;
+        else return 18000;
+    }
+}
+
+// Show Level Info
+void showLevels() {
+    printf("\n--- Position Levels ---\n");
+    printf("1 = Senior\n");
+    printf("2 = Mid Level\n");
+    printf("3 = Junior\n");
+    printf("4 = Fresher\n");
+}
+
+// Add Employee
+void addEmployee() {
+    int id, i;
+
+    printf("\n--- Add Employee ---\n");
+
+    printf("Enter ID: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < count; i++) {
+        if (e[i].id == id) {
+            printf("ID already exists!\n");
+            return;
+        }
+    }
+
+    e[count].id = id;
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", e[count].name);
+
+    printf("Enter Experience (years): ");
+    scanf("%d", &e[count].experience);
+
+    printf("Enter Position Level (1-4): ");
+    scanf("%d", &e[count].level);
+
+    if (e[count].level < 1 || e[count].level > 4) {
+        printf("Invalid Level!\n");
+        return;
+    }
+
+    e[count].salary = getSalary(e[count].level, e[count].experience);
+
+    printf("Auto Salary: %d\n", e[count].salary);
+
+    count++;
+    printf("Employee Added!\n");
+}
+
+//search employee
+
+void searchEmployee() {
+    int choice;
+
+    printf("\n--- Search Employee ---\n");
+    printf("1. Through ID\n");
+    printf("2. Through Name\n");
+    printf("Enter Choice: ");
+
+    if (scanf("%d", &choice) != 1) {
+        printf("Invalid Input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    if (choice == 1) {
+        int id, i, found = 0;
+
+        printf("Enter ID: ");
+        scanf("%d", &id);
+
+        for (i = 0; i < count; i++) {
+            if (e[i].id == id) {
+                printf("\nID:%d | Name:%s | Exp:%d | Level:%d | Salary:%d\n",
+                       e[i].id, e[i].name,
+                       e[i].experience, e[i].level,
+                       e[i].salary);
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found)
+            printf("Employee Not Found!\n");
+    }
+
+    else if (choice == 2) {
+        char name[50];
+        int i, found = 0;
+
+        printf("Enter Name: ");
+        scanf(" %[^\n]", name);
+
+        for (i = 0; i < count; i++) {
+            // 🔥 partial match (aman → aman1 bhi)
+            if (strstr(e[i].name, name) != NULL) {
+                printf("\nID:%d | Name:%s | Exp:%d | Level:%d | Salary:%d\n",
+                       e[i].id, e[i].name,
+                       e[i].experience, e[i].level,
+                       e[i].salary);
+                found = 1;
+            }
+        }
+
+        if (!found)
+            printf("Employee Not Found!\n");
+    }
+
+    else {
+        printf("Invalid Choice!\n");
+    }
+}
+
+//delete employee
+void deleteEmployee() {
+    int choice;
+
+    printf("\n--- Delete Employee ---\n");
+    printf("1. Through ID\n");
+    printf("2. Through Name\n");
+    printf("Enter Choice: ");
+
+    if (scanf("%d", &choice) != 1) {
+        printf("Invalid Input!\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    if (choice == 1) {
+        int id, i, j, found = 0;
+
+        printf("Enter ID: ");
+        scanf("%d", &id);
+
+        for (i = 0; i < count; i++) {
+            if (e[i].id == id) {
+                for (j = i; j < count - 1; j++) {
+                    e[j] = e[j + 1];
+                }
+                count--;
+                printf("Employee Deleted!\n");
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found)
+            printf("Employee Not Found!\n");
+    }
+
+    else if (choice == 2) {
+        char name[50];
+        int i, j;
+        int index[100], k = 0;
+
+        printf("Enter Name: ");
+        scanf(" %[^\n]", name);
+
+        // 🔍 matching employees store karo
+        for (i = 0; i < count; i++) {
+            if (strstr(e[i].name, name) != NULL) {
+                index[k++] = i;
+            }
+        }
+
+        if (k == 0) {
+            printf("No matching employee found!\n");
+            return;
+        }
+
+        // 📋 list show karo
+        printf("\nMatching Employees:\n");
+        for (i = 0; i < k; i++) {
+            int idx = index[i];
+            printf("%d. ID:%d | Name:%s | Salary:%d\n",
+                   i + 1, e[idx].id, e[idx].name, e[idx].salary);
+        }
+
+        int delChoice;
+        printf("Enter number to delete: ");
+        scanf("%d", &delChoice);
+
+        if (delChoice < 1 || delChoice > k) {
+            printf("Invalid Choice!\n");
+            return;
+        }
+
+        int delIndex = index[delChoice - 1];
+
+        // delete logic
+        for (i = delIndex; i < count - 1; i++) {
+            e[i] = e[i + 1];
+        }
+
+        count--;
+        printf("Employee Deleted Successfully!\n");
+    }
+
+    else {
+        printf("Invalid Choice!\n");
+    }
+}
+// Display All
+void displayEmployee() {
+    int i;
+
+    printf("\n--- Employee List ---\n");
+
+    for (i = 0; i < count; i++) {
+        printf("ID:%d | Name:%s | Exp:%d | Level:%d | Salary:%d\n",
+               e[i].id, e[i].name,
+               e[i].experience, e[i].level,
+               e[i].salary);
+    }
+
+    if (count == 0)
+        printf("No Data!\n");
+}
+
+// MAIN
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n===== EMPLOYEE MANAGEMENT SYSTEM =====\n");
+        printf("1. Add Employee\n");
+        printf("2. Show All Employees\n");
+        printf("3. Search Employee\n");
+        printf("4. Delete Employee\n");
+        printf("5. Show Position Levels\n"); // 🔥 NEW
+        printf("6. Exit\n");
+        printf("Enter Choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid Input!\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+       
+           switch(choice) {
+    case 1:
+        addEmployee();
+        break;
+
+    case 2:
+        displayEmployee();
+        break;
+
+    case 3:
+        searchEmployee();
+        break;
+
+    case 4:
+        deleteEmployee();   
+        break;
+
+    case 5:
+        showLevels();
+        break;
+
+    case 6:
+        return 0;
+
+    default:
+        printf("Invalid Choice!\n");
+        }
+    }
+}
