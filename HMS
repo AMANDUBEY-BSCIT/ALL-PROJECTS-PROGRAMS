@@ -1,0 +1,372 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+struct Patient {
+    int id;
+    char name[50];
+    int age;
+    char disease[50];
+    char doctor[50];
+    char status[20];
+};
+//struture
+struct Patient p[100];  
+int count = 0;    
+int main() {
+    int choice;
+    while (1) {
+        printf("\n===== HOSPITAL RECORD SYSTEM =====\n");
+        printf("1. Add Patient\n");
+        printf("2. Show All Patients\n");
+        printf("3. Search Patient\n");
+        printf("4. Discharge Patient\n");
+        printf("5. Delete Patient\n");
+        printf("6. Show Admitted Patients\n");
+        printf("7. Exit\n");
+        
+
+        printf("Enter Choice: ");
+        scanf("%d", &choice);
+
+ // ADD PATIENT
+        if (choice == 1) {
+
+            printf("Enter ID: ");
+            scanf("%d", &p[count].id);
+
+            printf("Enter Name: ");
+            scanf(" %[^\n]", p[count].name);
+
+            printf("Enter Age: ");
+            scanf("%d", &p[count].age);
+
+            printf("Enter Disease: ");
+            scanf(" %[^\n]", p[count].disease);
+
+            printf("Enter Doctor Name: ");
+            scanf(" %[^\n]", p[count].doctor);
+
+            strcpy(p[count].status, "Admitted");
+
+            count++;
+
+            printf("Patient Added Successfully!\n");
+        }
+
+ // SHOW ALL PATIENTS
+        else if (choice == 2) {
+
+            if (count == 0) {
+                printf("No Patients Found!\n");
+            }
+            else {
+                for (int i = 0; i < count; i++) {
+
+                    printf("\nID: %d", p[i].id);
+                    printf("\nName: %s", p[i].name);
+                    printf("\nAge: %d", p[i].age);
+                    printf("\nDisease: %s", p[i].disease);
+                    printf("\nDoctor: %s", p[i].doctor);
+                    printf("\nStatus: %s\n", p[i].status);
+                }
+            }
+        }
+ //search patient
+     else if (choice == 3) {
+         int opt;
+              printf("\n1. Search by ID\n");
+              printf("2. Search by Name\n");
+              printf("3. Back\n");
+
+              printf("Enter Choice: ");
+              scanf("%d", &opt);
+              
+    if (opt == 1) {
+        int id, found = 0;
+            printf("Enter ID: ");
+            scanf("%d", &id);
+                for (int i = 0; i < count; i++) {
+                if (p[i].id == id) {
+            printf("\nID: %d", p[i].id);
+            printf("\nName: %s", p[i].name);
+            printf("\nAge: %d", p[i].age);
+            printf("\nDisease: %s", p[i].disease);
+            printf("\nDoctor: %s", p[i].doctor);
+            printf("\nStatus: %s\n", p[i].status);
+
+            found = 1;
+        }
+    }
+          
+   
+
+    if (found == 0) {
+        printf("Patient Not Found!\n");
+    }
+}
+
+     else if (opt == 2) {
+
+    char name[50];
+    int found = 0;
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", name);
+
+    for (int i = 0; i < count; i++) {
+
+        if (strstr(p[i].name, name) != NULL) {
+
+            printf("\nID: %d", p[i].id);
+            printf("\nName: %s", p[i].name);
+            printf("\nAge: %d", p[i].age);
+            printf("\nDisease: %s", p[i].disease);
+            printf("\nDoctor: %s", p[i].doctor);
+            printf("\nStatus: %s\n", p[i].status);
+
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        printf("Patient Not Found!\n");
+    }
+}
+
+       if (opt == 3) {
+        continue;  
+    }
+         else {
+    printf("Invalid Choice!\n");
+}
+}        
+//discharge patient
+      else if (choice == 4) {
+
+    int opt;
+
+    printf("\n--- Discharge Patient ---\n");
+    printf("1. Through ID\n");
+    printf("2. Through Name\n");
+    printf("3. Back\n");
+
+    printf("Enter Choice: ");
+    scanf("%d", &opt);
+
+    // 🔹 THROUGH ID
+    if (opt == 1) {
+
+        int id, found = 0;
+
+        printf("Enter ID: ");
+        scanf("%d", &id);
+
+        for (int i = 0; i < count; i++) {
+
+            if (p[i].id == id) {
+
+                if (strcmp(p[i].status, "Admitted") == 0) {
+                    strcpy(p[i].status, "Discharged");
+                    printf("Patient Discharged Successfully!\n");
+                } 
+                else {
+                    printf("Patient already discharged!\n");
+                }
+
+                found = 1;
+                break;
+            }
+        }
+
+        if (found == 0) {
+            printf("Patient Not Found!\n");
+        }
+    }
+
+    // 🔹 THROUGH NAME (SMART SELECTION)
+    else if (opt == 2) {
+
+        char name[50];
+        int i, index[100], k = 0;
+
+        printf("Enter Name: ");
+        scanf(" %[^\n]", name);
+
+        // matching patients show karo
+        for (i = 0; i < count; i++) {
+
+            if (strstr(p[i].name, name) != NULL) {
+                printf("%d. %s\n", k + 1, p[i].name);
+                index[k] = i;
+                k++;
+            }
+        }
+
+        if (k == 0) {
+            printf("Patient Not Found!\n");
+        } 
+        else {
+
+            int ch;
+            printf("Select Patient: ");
+            scanf("%d", &ch);
+
+            if (ch >= 1 && ch <= k) {
+
+                int realIndex = index[ch - 1];
+
+                if (strcmp(p[realIndex].status, "Admitted") == 0) {
+
+                    strcpy(p[realIndex].status, "Discharged");
+                    printf("Patient Discharged Successfully!\n");
+
+                } 
+                else {
+                    printf("Already Discharged!\n");
+                }
+
+            } 
+            else {
+                printf("Invalid Choice!\n");
+            }
+        }
+    }
+
+    // 🔹 BACK OPTION
+    else if (opt == 3) {
+        continue;   // main menu pe wapas
+    }
+
+    else {
+        printf("Invalid Choice!\n");
+    }
+}
+//delete patient  
+         else if (choice == 5) {
+
+    int opt;
+
+    printf("\n1. Through ID\n");
+    printf("2. Through Name\n");
+    printf("3. Back\n");
+
+    printf("Enter Choice: ");
+    scanf("%d", &opt);
+
+    if (opt == 1) {
+
+        int id, i, j, found = 0;
+
+        printf("Enter ID: ");
+        scanf("%d", &id);
+
+        for (i = 0; i < count; i++) {
+
+            if (p[i].id == id) {
+
+                for (j = i; j < count - 1; j++) {
+                    p[j] = p[j + 1];
+                }
+
+                count--;
+                printf("Patient Deleted Successfully!\n");
+
+                found = 1;
+                break;
+            }
+        }
+
+        if (found == 0) {
+            printf("Patient Not Found!\n");
+        }
+    }
+
+    else if (opt == 2) {
+
+        char name[50];
+        int i, index[100], k = 0;
+
+        printf("Enter Name: ");
+        scanf(" %[^\n]", name);
+
+        for (i = 0; i < count; i++) {
+
+            if (strstr(p[i].name, name) != NULL) {
+                printf("%d. %s\n", k + 1, p[i].name);
+                index[k] = i;
+                k++;
+            }
+        }
+
+        if (k == 0) {
+            printf("Patient Not Found!\n");
+        } else {
+
+            int ch;
+            printf("Select which one to delete: ");
+            scanf("%d", &ch);
+
+            if (ch >= 1 && ch <= k) {
+
+                int delIndex = index[ch - 1];
+
+                for (i = delIndex; i < count - 1; i++) {
+                    p[i] = p[i + 1];
+                }
+
+                count--;
+                printf("Patient Deleted Successfully!\n");
+
+            } else {
+                printf("Invalid Choice!\n");
+            }
+        }
+    }
+       
+        if (opt == 3) {
+        continue;  
+    }
+    
+    else {
+        printf("Invalid Choice!\n");
+    }
+         }
+//show addmitted patient
+    else if (choice == 6) {
+
+    int i, found = 0;
+
+    printf("\n--- Admitted Patients ---\n");
+
+    for (i = 0; i < count; i++) {
+
+        if (strcmp(p[i].status, "Admitted") == 0) {
+
+            printf("\nID: %d", p[i].id);
+            printf("\nName: %s", p[i].name);
+            printf("\nAge: %d", p[i].age);
+            printf("\nDisease: %s", p[i].disease);
+            printf("\nDoctor: %s", p[i].doctor);
+            printf("\nStatus: %s\n", p[i].status);
+
+            found = 1;
+        }
+    }
+
+    if (found == 0) {
+        printf("No Admitted Patients Found!\n");
+    }
+}
+// 7. EXIT
+        else if (choice == 7) {
+            printf("Exiting Program...\n");
+            exit(0);
+        }
+
+        else {
+            printf("Invalid Choice!\n");
+        }
+    }
+
+    return 0;
+}
